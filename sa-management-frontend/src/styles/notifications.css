@@ -1,0 +1,403 @@
+/* src/styles/notifications.css - Styles pour notifications SA */
+
+/* ===== ANIMATIONS POUR LES NOTIFICATIONS ===== */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-3px);
+  }
+  60% {
+    transform: translateY(-1px);
+  }
+}
+
+/* ===== STYLES POUR LES SNACKBARS ===== */
+.notification-snackbar-enter {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.notification-snackbar-exit {
+  animation: slideOutRight 0.3s ease-in;
+}
+
+/* ===== STYLES POUR LES BADGES ===== */
+.notification-badge-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.notification-badge-bounce {
+  animation: bounce 1s ease-in-out;
+}
+
+/* ===== STYLES POUR LA LISTE DES NOTIFICATIONS ===== */
+.notification-list {
+  max-height: 400px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #3498db #f1f1f1;
+}
+
+.notification-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notification-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+  background: #3498db;
+  border-radius: 3px;
+}
+
+.notification-list::-webkit-scrollbar-thumb:hover {
+  background: #2980b9;
+}
+
+/* ===== STYLES POUR LES ITEMS DE NOTIFICATION ===== */
+.notification-item {
+  transition: all 0.2s ease;
+  border-left: 4px solid transparent;
+  position: relative;
+}
+
+.notification-item.unread {
+  border-left-color: #3498db;
+  background-color: rgba(52, 152, 219, 0.03);
+}
+
+.notification-item:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+  transform: translateX(1px);
+}
+
+.notification-item.urgent {
+  border-left-color: #e74c3c !important;
+  background-color: rgba(231, 76, 60, 0.05) !important;
+}
+
+/* ===== STYLES POUR LES TYPES DE NOTIFICATIONS ===== */
+.notification-admin {
+  border-left-color: #3498db !important;
+}
+
+.notification-upas {
+  border-left-color: #2196f3 !important;
+}
+
+.notification-reception {
+  border-left-color: #9c27b0 !important;
+}
+
+.notification-success {
+  border-left-color: #4caf50 !important;
+}
+
+.notification-warning {
+  border-left-color: #ff9800 !important;
+}
+
+.notification-error {
+  border-left-color: #f44336 !important;
+}
+
+/* ===== STYLES POUR LES ICÔNES ===== */
+.notification-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-size: 18px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.notification-icon.admin {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.notification-icon.upas {
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+}
+
+.notification-icon.reception {
+  background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
+}
+
+.notification-icon.success {
+  background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+}
+
+.notification-icon.warning {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+}
+
+.notification-icon.error {
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+}
+
+/* ===== STYLES POUR LES CHIPS ET BADGES ===== */
+.notification-chip-new {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+  color: white !important;
+  font-size: 0.65rem !important;
+  height: 18px !important;
+  font-weight: bold !important;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.notification-chip-urgent {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+  color: white !important;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+.notification-chip-priority {
+  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
+  color: white !important;
+}
+
+/* ===== STYLES POUR LE HEADER DES NOTIFICATIONS ===== */
+.notification-header {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  padding: 16px;
+  border-radius: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.notification-header h6 {
+  margin: 0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ===== STYLES POUR LES BOUTONS D'ACTION ===== */
+.notification-actions .MuiButton-root {
+  min-width: auto;
+  padding: 2px 6px;
+  font-size: 0.65rem;
+  border-radius: 4px;
+  margin-left: 4px;
+  transition: all 0.2s ease;
+}
+
+.notification-actions .MuiButton-root:hover {
+  transform: scale(1.05);
+}
+
+/* ===== STYLES POUR LES TIMESTAMPS ===== */
+.notification-timestamp {
+  font-size: 0.7rem !important;
+  color: #7f8c8d !important;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+/* ===== STYLES POUR LES DÉTAILS ===== */
+.notification-details {
+  font-size: 0.75rem !important;
+  color: #7f8c8d !important;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+/* ===== STYLES POUR L'ÉTAT VIDE ===== */
+.notification-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #7f8c8d;
+}
+
+.notification-empty svg {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+  color: #bdc3c7;
+}
+
+.notification-empty h6 {
+  margin-bottom: 8px;
+  color: #95a5a6;
+}
+
+.notification-empty p {
+  color: #bdc3c7;
+  font-size: 0.9rem;
+}
+
+/* ===== STYLES RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .notification-list {
+    max-height: 300px;
+  }
+  
+  .notification-item {
+    padding: 8px 12px;
+  }
+  
+  .notification-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    margin-right: 8px;
+  }
+  
+  .notification-chip-new {
+    font-size: 0.6rem !important;
+    height: 16px !important;
+  }
+  
+  .notification-header {
+    padding: 12px;
+  }
+  
+  .notification-details {
+    font-size: 0.7rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .notification-actions .MuiButton-root {
+    padding: 1px 4px;
+    font-size: 0.6rem;
+  }
+  
+  .notification-timestamp {
+    font-size: 0.65rem !important;
+  }
+}
+
+/* ===== STYLES POUR LE MODE SOMBRE (OPTIONNEL) ===== */
+@media (prefers-color-scheme: dark) {
+  .notification-item {
+    background-color: rgba(255, 255, 255, 0.02);
+  }
+  
+  .notification-item.unread {
+    background-color: rgba(52, 152, 219, 0.08);
+  }
+  
+  .notification-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+  
+  .notification-list::-webkit-scrollbar-track {
+    background: #2c3e50;
+  }
+  
+  .notification-list::-webkit-scrollbar-thumb {
+    background: #3498db;
+  }
+  
+  .notification-empty {
+    color: #95a5a6;
+  }
+}
+
+/* ===== ANIMATIONS D'ENTRÉE POUR LES NOUVELLES NOTIFICATIONS ===== */
+.notification-item-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: slideInDown 0.3s ease-out forwards;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== STYLES POUR LES INDICATEURS DE PRIORITÉ ===== */
+.notification-priority-high::before {
+  content: "🔴";
+  margin-right: 4px;
+}
+
+.notification-priority-urgent::before {
+  content: "🚨";
+  margin-right: 4px;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.notification-priority-normal::before {
+  content: "🔵";
+  margin-right: 4px;
+}
+
+/* ===== STYLES POUR LES NOTIFICATIONS DE SYSTÈME ===== */
+.notification-system {
+  border-left-color: #95a5a6 !important;
+  background-color: rgba(149, 165, 166, 0.03) !important;
+}
+
+.notification-system .notification-icon {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+}
+
+/* ===== EFFET DE BRILLANCE POUR LES NOUVELLES NOTIFICATIONS ===== */
+.notification-item.unread::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.5), transparent);
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

@@ -1,0 +1,1316 @@
+/* ===== FORMULAIRE BÉNÉFICIAIRE - STYLE MÉDICAL PROFESSIONNEL ===== */
+/* Design système médical moderne pour le formulaire de gestion des bénéficiaires */
+
+/* ✅ VARIABLES CSS MÉDICALES */
+:root {
+  /* Palette médicale professionnelle */
+  --medical-primary: #1e40af;
+  --medical-primary-light: #3b82f6;
+  --medical-primary-lighter: #dbeafe;
+  --medical-primary-dark: #1e3a8a;
+  --medical-primary-hover: #1d4ed8;
+  
+  --medical-success: #059669;
+  --medical-success-light: #10b981;
+  --medical-success-bg: #ecfdf5;
+  --medical-success-border: #a7f3d0;
+  
+  --medical-warning: #d97706;
+  --medical-warning-light: #f59e0b;
+  --medical-warning-bg: #fffbeb;
+  --medical-warning-border: #fed7aa;
+  
+  --medical-danger: #dc2626;
+  --medical-danger-light: #ef4444;
+  --medical-danger-bg: #fef2f2;
+  --medical-danger-border: #fecaca;
+  
+  --medical-info: #0891b2;
+  --medical-info-light: #06b6d4;
+  --medical-info-bg: #f0f9ff;
+  --medical-info-border: #7dd3fc;
+  
+  /* Couleurs de fond et surfaces */
+  --medical-bg-primary: #ffffff;
+  --medical-bg-secondary: #f8fafc;
+  --medical-bg-tertiary: #f1f5f9;
+  --medical-bg-card: #ffffff;
+  --medical-bg-hover: #f8fafc;
+  --medical-bg-selected: rgba(30, 64, 175, 0.05);
+  
+  /* Couleurs de texte */
+  --medical-text-primary: #0f172a;
+  --medical-text-secondary: #334155;
+  --medical-text-tertiary: #64748b;
+  --medical-text-muted: #94a3b8;
+  --medical-text-inverse: #ffffff;
+  
+  /* Bordures */
+  --medical-border-primary: #e2e8f0;
+  --medical-border-secondary: #f1f5f9;
+  --medical-border-hover: #cbd5e1;
+  --medical-border-focus: #3b82f6;
+  
+  /* Ombres médicales */
+  --medical-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --medical-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --medical-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --medical-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --medical-shadow-focus: 0 0 0 3px rgba(59, 130, 246, 0.12);
+  --medical-shadow-focus-danger: 0 0 0 3px rgba(220, 38, 38, 0.12);
+  
+  /* Espacements harmonieux */
+  --medical-spacing-1: 0.25rem;
+  --medical-spacing-2: 0.5rem;
+  --medical-spacing-3: 0.75rem;
+  --medical-spacing-4: 1rem;
+  --medical-spacing-5: 1.25rem;
+  --medical-spacing-6: 1.5rem;
+  --medical-spacing-8: 2rem;
+  --medical-spacing-10: 2.5rem;
+  --medical-spacing-12: 3rem;
+  
+  /* Rayons de bordure */
+  --medical-radius-sm: 0.125rem;
+  --medical-radius-base: 0.25rem;
+  --medical-radius-md: 0.375rem;
+  --medical-radius-lg: 0.5rem;
+  --medical-radius-xl: 0.75rem;
+  --medical-radius-2xl: 1rem;
+  --medical-radius-3xl: 1.5rem;
+  --medical-radius-full: 9999px;
+  
+  /* Transitions */
+  --medical-transition-fast: 0.1s ease-in-out;
+  --medical-transition-normal: 0.2s ease-in-out;
+  --medical-transition-slow: 0.3s ease-in-out;
+  
+  /* Typographie */
+  --medical-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --medical-text-xs: 0.75rem;
+  --medical-text-sm: 0.875rem;
+  --medical-text-base: 1rem;
+  --medical-text-lg: 1.125rem;
+  --medical-text-xl: 1.25rem;
+  --medical-text-2xl: 1.5rem;
+  --medical-text-3xl: 1.875rem;
+}
+
+/* ✅ RESET ET BASE */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ✅ CONTENEUR PRINCIPAL DU FORMULAIRE */
+.beneficiaire-form {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: var(--medical-bg-card);
+  border-radius: var(--medical-radius-3xl);
+  box-shadow: var(--medical-shadow-xl);
+  overflow: hidden;
+  position: relative;
+  font-family: var(--medical-font-sans);
+}
+
+/* Barre décorative médicale en haut du formulaire */
+.beneficiaire-form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, 
+    var(--medical-primary) 0%, 
+    var(--medical-info) 25%, 
+    var(--medical-success) 50%, 
+    var(--medical-warning) 75%, 
+    var(--medical-primary) 100%
+  );
+  animation: medicalGradientShift 8s ease-in-out infinite;
+}
+
+@keyframes medicalGradientShift {
+  0%, 100% { 
+    background: linear-gradient(90deg, 
+      var(--medical-primary) 0%, 
+      var(--medical-info) 25%, 
+      var(--medical-success) 50%, 
+      var(--medical-warning) 75%, 
+      var(--medical-primary) 100%
+    );
+  }
+  50% { 
+    background: linear-gradient(90deg, 
+      var(--medical-success) 0%, 
+      var(--medical-primary) 25%, 
+      var(--medical-info) 50%, 
+      var(--medical-success) 75%, 
+      var(--medical-warning) 100%
+    );
+  }
+}
+
+/* ✅ FORMULAIRE MÉDICAL */
+.medical-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--medical-spacing-8);
+  padding: var(--medical-spacing-8);
+  padding-top: calc(var(--medical-spacing-8) + 5px);
+  position: relative;
+}
+
+/* Overlay pattern subtil */
+.medical-form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.02) 0%, transparent 25%),
+    radial-gradient(circle at 75% 75%, rgba(16, 185, 129, 0.02) 0%, transparent 25%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.medical-form > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ✅ SECTIONS DU FORMULAIRE */
+.form-section {
+  background: linear-gradient(135deg, 
+    var(--medical-bg-card) 0%, 
+    var(--medical-bg-secondary) 100%
+  );
+  border: 1px solid var(--medical-border-primary);
+  border-radius: var(--medical-radius-2xl);
+  padding: var(--medical-spacing-8);
+  position: relative;
+  overflow: hidden;
+  transition: all var(--medical-transition-normal);
+  box-shadow: var(--medical-shadow-sm);
+}
+
+.form-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    var(--medical-primary), 
+    var(--medical-success), 
+    var(--medical-info)
+  );
+  border-radius: var(--medical-radius-2xl) var(--medical-radius-2xl) 0 0;
+}
+
+.form-section:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--medical-shadow-lg);
+  border-color: var(--medical-primary);
+}
+
+/* Animation d'apparition */
+.form-section {
+  animation: sectionSlideIn 0.6s ease-out;
+}
+
+@keyframes sectionSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ✅ TITRES DES SECTIONS */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--medical-spacing-3);
+  font-size: var(--medical-text-2xl);
+  font-weight: 800;
+  color: var(--medical-text-primary);
+  margin: 0 0 var(--medical-spacing-6) 0;
+  padding-bottom: var(--medical-spacing-4);
+  border-bottom: 3px solid var(--medical-border-secondary);
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--medical-primary), var(--medical-success));
+  border-radius: var(--medical-radius-full);
+}
+
+.section-icon {
+  font-size: var(--medical-text-3xl);
+  background: linear-gradient(135deg, var(--medical-primary), var(--medical-info));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.2));
+  animation: iconPulse 3s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.section-subtitle {
+  display: block;
+  font-size: var(--medical-text-sm);
+  font-weight: 500;
+  color: var(--medical-text-muted);
+  margin-top: var(--medical-spacing-2);
+  font-style: italic;
+}
+
+/* ✅ GRILLE DU FORMULAIRE */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--medical-spacing-6);
+  margin-top: var(--medical-spacing-2);
+}
+
+/* ✅ GROUPES DE CHAMPS */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--medical-spacing-2);
+  position: relative;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Animation d'apparition pour les champs */
+.form-group {
+  animation: fieldFadeIn 0.4s ease-out;
+}
+
+@keyframes fieldFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ✅ LABELS PROFESSIONNELS */
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: var(--medical-spacing-2);
+  font-weight: 700;
+  color: var(--medical-text-primary);
+  font-size: var(--medical-text-sm);
+  margin-bottom: var(--medical-spacing-1);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-label.required::after {
+  content: '*';
+  color: var(--medical-danger);
+  margin-left: var(--medical-spacing-1);
+  font-weight: 900;
+  font-size: var(--medical-text-base);
+  animation: requiredPulse 2s ease-in-out infinite;
+}
+
+@keyframes requiredPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.label-icon {
+  font-size: var(--medical-text-lg);
+  color: var(--medical-primary);
+  filter: drop-shadow(0 1px 2px rgba(59, 130, 246, 0.3));
+}
+
+/* ✅ CHAMPS DE SAISIE PROFESSIONNELS */
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: var(--medical-spacing-4) var(--medical-spacing-5);
+  border: 2px solid var(--medical-border-primary);
+  border-radius: var(--medical-radius-xl);
+  background: var(--medical-bg-card);
+  color: var(--medical-text-primary);
+  font-size: var(--medical-text-base);
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1.5;
+  transition: all var(--medical-transition-normal);
+  outline: none;
+  position: relative;
+  box-shadow: var(--medical-shadow-sm);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--medical-primary);
+  box-shadow: var(--medical-shadow-focus);
+  background: var(--medical-bg-card);
+  transform: translateY(-1px);
+}
+
+.form-input:hover,
+.form-select:hover,
+.form-textarea:hover {
+  border-color: var(--medical-border-hover);
+  box-shadow: var(--medical-shadow-md);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--medical-text-muted);
+  font-style: italic;
+}
+
+/* États d'erreur avec animation */
+.form-input.error,
+.form-select.error,
+.form-textarea.error {
+  border-color: var(--medical-danger);
+  box-shadow: var(--medical-shadow-focus-danger);
+  animation: errorShake 0.5s ease-in-out;
+}
+
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* ✅ TEXTAREA SPÉCIALISÉE */
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+  font-family: inherit;
+  line-height: 1.6;
+}
+
+/* ✅ CHECKBOXES MODERNES */
+.form-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: var(--medical-spacing-4);
+  padding: var(--medical-spacing-4) var(--medical-spacing-5);
+  background: linear-gradient(135deg, var(--medical-bg-card) 0%, var(--medical-bg-secondary) 100%);
+  border: 2px solid var(--medical-border-primary);
+  border-radius: var(--medical-radius-xl);
+  transition: all var(--medical-transition-normal);
+  cursor: pointer;
+  box-shadow: var(--medical-shadow-sm);
+}
+
+.form-checkbox-group:hover {
+  border-color: var(--medical-primary);
+  box-shadow: var(--medical-shadow-md);
+  transform: translateY(-1px);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--medical-spacing-3);
+  cursor: pointer;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+  color: var(--medical-text-primary);
+}
+
+.form-checkbox {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--medical-border-primary);
+  border-radius: var(--medical-radius-lg);
+  background: var(--medical-bg-card);
+  cursor: pointer;
+  transition: all var(--medical-transition-normal);
+  margin: 0;
+  position: relative;
+  appearance: none;
+  -webkit-appearance: none;
+  box-shadow: var(--medical-shadow-sm);
+}
+
+.form-checkbox:checked {
+  background: linear-gradient(135deg, var(--medical-primary) 0%, var(--medical-primary-light) 100%);
+  border-color: var(--medical-primary);
+  transform: scale(1.05);
+  box-shadow: var(--medical-shadow-md);
+}
+
+.form-checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: var(--medical-text-base);
+  font-weight: 900;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.form-checkbox:focus-visible {
+  box-shadow: var(--medical-shadow-focus);
+}
+
+.checkbox-text {
+  color: var(--medical-text-primary);
+  font-size: var(--medical-text-base);
+  line-height: 1.5;
+}
+
+/* ✅ MESSAGES D'ERREUR AVANCÉS */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: var(--medical-spacing-2);
+  color: var(--medical-danger);
+  font-size: var(--medical-text-sm);
+  font-weight: 700;
+  margin-top: var(--medical-spacing-2);
+  padding: var(--medical-spacing-2) var(--medical-spacing-3);
+  background: var(--medical-danger-bg);
+  border: 1px solid var(--medical-danger-border);
+  border-radius: var(--medical-radius-lg);
+  animation: errorSlideIn 0.3s ease-out;
+}
+
+@keyframes errorSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.error-message::before {
+  content: '⚠️';
+  font-size: var(--medical-text-base);
+  animation: errorIconBounce 1s ease-in-out infinite;
+}
+
+@keyframes errorIconBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* ✅ INFORMATIONS COMPLÉMENTAIRES */
+.field-info {
+  color: var(--medical-text-muted);
+  font-size: var(--medical-text-sm);
+  margin-top: var(--medical-spacing-2);
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: var(--medical-spacing-2);
+  padding: var(--medical-spacing-2) var(--medical-spacing-3);
+  background: var(--medical-info-bg);
+  border: 1px solid var(--medical-info-border);
+  border-radius: var(--medical-radius-lg);
+  font-weight: 500;
+}
+
+.field-requirement {
+  display: block;
+  font-size: var(--medical-text-xs);
+  font-weight: 600;
+  color: var(--medical-warning);
+  margin-top: var(--medical-spacing-1);
+  padding: var(--medical-spacing-1) var(--medical-spacing-2);
+  background: var(--medical-warning-bg);
+  border-radius: var(--medical-radius-base);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ✅ BADGE MINEUR SPÉCIAL */
+.minor-badge {
+  background: linear-gradient(135deg, var(--medical-warning) 0%, var(--medical-warning-light) 100%);
+  color: var(--medical-text-inverse);
+  padding: var(--medical-spacing-1) var(--medical-spacing-3);
+  border-radius: var(--medical-radius-full);
+  font-size: var(--medical-text-xs);
+  font-weight: 800;
+  margin-left: var(--medical-spacing-2);
+  border: 2px solid var(--medical-warning-border);
+  box-shadow: var(--medical-shadow-sm);
+  animation: minorBadgePulse 2s ease-in-out infinite;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+@keyframes minorBadgePulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: var(--medical-shadow-sm);
+  }
+  50% { 
+    transform: scale(1.05);
+    box-shadow: var(--medical-shadow-md);
+  }
+}
+
+/* ✅ BOUTONS D'ACTION PROFESSIONNELS */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--medical-spacing-4);
+  padding-top: var(--medical-spacing-8);
+  border-top: 3px solid var(--medical-border-secondary);
+  margin-top: var(--medical-spacing-8);
+  position: relative;
+}
+
+.form-actions::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 0;
+  width: 100px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--medical-primary), var(--medical-success));
+  border-radius: var(--medical-radius-full);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--medical-spacing-3);
+  padding: var(--medical-spacing-4) var(--medical-spacing-8);
+  border: 2px solid transparent;
+  border-radius: var(--medical-radius-xl);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: var(--medical-text-base);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--medical-transition-normal);
+  box-shadow: var(--medical-shadow-lg);
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  user-select: none;
+  white-space: nowrap;
+  min-width: 160px;
+  min-height: 50px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn:focus-visible {
+  box-shadow: var(--medical-shadow-focus);
+}
+
+.btn:active {
+  transform: translateY(2px);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  pointer-events: none;
+}
+
+/* Variantes des boutons */
+.btn-primary {
+  background: linear-gradient(135deg, var(--medical-primary) 0%, var(--medical-primary-light) 100%);
+  color: var(--medical-text-inverse);
+  border-color: var(--medical-primary);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--medical-primary-dark) 0%, var(--medical-primary) 100%);
+  transform: translateY(-3px);
+  box-shadow: var(--medical-shadow-xl);
+}
+
+.btn-secondary {
+  background: var(--medical-bg-card);
+  color: var(--medical-text-secondary);
+  border-color: var(--medical-border-primary);
+}
+
+.btn-secondary:hover {
+  background: var(--medical-bg-hover);
+  border-color: var(--medical-primary);
+  color: var(--medical-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--medical-shadow-lg);
+}
+
+.btn-icon {
+  font-size: var(--medical-text-lg);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+/* ✅ SECTION DEBUG PROFESSIONNELLE */
+.form-debug {
+  margin-top: var(--medical-spacing-8);
+  padding: var(--medical-spacing-6);
+  background: linear-gradient(135deg, var(--medical-bg-tertiary) 0%, var(--medical-bg-secondary) 100%);
+  border: 2px solid var(--medical-border-primary);
+  border-radius: var(--medical-radius-xl);
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  box-shadow: var(--medical-shadow-md);
+}
+
+.form-debug details {
+  cursor: pointer;
+}
+
+.form-debug summary {
+  font-weight: 700;
+  color: var(--medical-primary);
+  margin-bottom: var(--medical-spacing-3);
+  user-select: none;
+  padding: var(--medical-spacing-2) var(--medical-spacing-3);
+  background: var(--medical-primary-lighter);
+  border-radius: var(--medical-radius-lg);
+  transition: all var(--medical-transition-normal);
+}
+
+.form-debug summary:hover {
+  background: var(--medical-primary);
+  color: var(--medical-text-inverse);
+}
+
+.form-debug pre {
+  background: var(--medical-bg-card);
+  padding: var(--medical-spacing-4);
+  border-radius: var(--medical-radius-lg);
+  overflow-x: auto;
+  font-size: var(--medical-text-sm);
+  line-height: 1.6;
+  color: var(--medical-text-primary);
+  border: 1px solid var(--medical-border-secondary);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* ✅ RESPONSIVE DESIGN MÉDICAL */
+@media (max-width: 1024px) {
+  .form-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--medical-spacing-5);
+  }
+}
+
+@media (max-width: 768px) {
+  .medical-form {
+    padding: var(--medical-spacing-6);
+    gap: var(--medical-spacing-6);
+  }
+  
+  .form-section {
+    padding: var(--medical-spacing-6);
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: var(--medical-spacing-4);
+  }
+  
+  .section-title {
+    font-size: var(--medical-text-xl);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--medical-spacing-2);
+  }
+  
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: var(--medical-spacing-3);
+  }
+  
+  .btn {
+    width: 100%;
+    justify-content: center;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .beneficiaire-form {
+    margin: var(--medical-spacing-3);
+    border-radius: var(--medical-radius-2xl);
+  }
+  
+  .medical-form {
+    padding: var(--medical-spacing-4);
+    gap: var(--medical-spacing-5);
+  }
+  
+  .form-section {
+    padding: var(--medical-spacing-4);
+  }
+  
+  .section-title {
+    font-size: var(--medical-text-lg);
+    margin-bottom: var(--medical-spacing-4);
+  }
+  
+  .form-input,
+  .form-select,
+  .form-textarea {
+    padding: var(--medical-spacing-3) var(--medical-spacing-4);
+  }
+  
+  .form-checkbox-group {
+    padding: var(--medical-spacing-3);
+  }
+  
+  .minor-badge {
+    display: block;
+    margin-left: 0;
+    margin-top: var(--medical-spacing-2);
+    text-align: center;
+    padding: var(--medical-spacing-2) var(--medical-spacing-3);
+  }
+}
+
+/* ✅ ANIMATIONS SPÉCIALISÉES POUR CHAMPS CONDITIONNELS */
+.form-section[style*="display: block"],
+.form-group[style*="display: block"] {
+  animation: conditionalFieldSlideIn 0.5s ease-out;
+}
+
+@keyframes conditionalFieldSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Animation pour les champs qui disparaissent */
+.form-section[style*="display: none"],
+.form-group[style*="display: none"] {
+  animation: conditionalFieldSlideOut 0.3s ease-in;
+}
+
+@keyframes conditionalFieldSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+}
+
+/* ✅ ÉTATS DE LOADING POUR LES BOUTONS */
+.btn:disabled .btn-icon {
+  animation: loadingSpin 1s linear infinite;
+}
+
+@keyframes loadingSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ✅ INDICATEURS VISUELS POUR LES CHAMPS OBLIGATOIRES */
+.form-group:has(.form-label.required) {
+  position: relative;
+}
+
+.form-group:has(.form-label.required)::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--medical-danger) 0%, var(--medical-warning) 100%);
+  border-radius: var(--medical-radius-full);
+  opacity: 0.3;
+}
+
+/* ✅ STYLES POUR LES OPTGROUPS */
+.form-select optgroup {
+  background: var(--medical-bg-secondary);
+  color: var(--medical-text-primary);
+  font-weight: 700;
+  font-size: var(--medical-text-sm);
+  padding: var(--medical-spacing-2);
+}
+
+.form-select option {
+  background: var(--medical-bg-card);
+  color: var(--medical-text-primary);
+  padding: var(--medical-spacing-2);
+  font-weight: 500;
+}
+
+.form-select option:hover,
+.form-select option:focus {
+  background: var(--medical-primary-lighter);
+  color: var(--medical-primary);
+}
+
+/* ✅ STYLES POUR LES ÉTATS DE VALIDATION EN TEMPS RÉEL */
+.form-input:valid:not(:placeholder-shown),
+.form-select:valid,
+.form-textarea:valid:not(:placeholder-shown) {
+  border-color: var(--medical-success);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+.form-input:invalid:not(:placeholder-shown),
+.form-select:invalid,
+.form-textarea:invalid:not(:placeholder-shown) {
+  border-color: var(--medical-danger);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+/* ✅ INDICATEUR DE PROGRESSION DU FORMULAIRE */
+.form-progress {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--medical-bg-card);
+  border-bottom: 1px solid var(--medical-border-primary);
+  padding: var(--medical-spacing-3) var(--medical-spacing-8);
+  margin: calc(-1 * var(--medical-spacing-8)) calc(-1 * var(--medical-spacing-8)) var(--medical-spacing-6);
+  border-radius: var(--medical-radius-3xl) var(--medical-radius-3xl) 0 0;
+}
+
+.form-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--medical-bg-tertiary);
+  border-radius: var(--medical-radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.form-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--medical-primary), var(--medical-success));
+  border-radius: var(--medical-radius-full);
+  transition: width 0.5s ease-in-out;
+  position: relative;
+}
+
+.form-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.3) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.3) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 12px 12px;
+  animation: progressStripes 1s linear infinite;
+}
+
+@keyframes progressStripes {
+  0% { background-position: 0 0; }
+  100% { background-position: 12px 0; }
+}
+
+/* ✅ TOOLTIPS POUR LES CHAMPS */
+.form-group[data-tooltip] {
+  position: relative;
+}
+
+.form-group[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--medical-text-primary);
+  color: var(--medical-text-inverse);
+  padding: var(--medical-spacing-2) var(--medical-spacing-3);
+  border-radius: var(--medical-radius-lg);
+  font-size: var(--medical-text-xs);
+  white-space: nowrap;
+  z-index: 1000;
+  box-shadow: var(--medical-shadow-lg);
+  animation: tooltipFadeIn 0.2s ease-out;
+}
+
+.form-group[data-tooltip]:hover::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--medical-text-primary);
+  z-index: 1000;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ✅ STYLES POUR LES CHAMPS DE TYPE DATE */
+.form-input[type="date"] {
+  position: relative;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%233b82f6' viewBox='0 0 24 24'%3E%3Cpath d='M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--medical-spacing-4) center;
+  background-size: 20px;
+  padding-right: calc(var(--medical-spacing-5) + 24px);
+}
+
+/* ✅ STYLES POUR LES CHAMPS DE TYPE TEL */
+.form-input[type="tel"] {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%233b82f6' viewBox='0 0 24 24'%3E%3Cpath d='M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--medical-spacing-4) center;
+  background-size: 20px;
+  padding-right: calc(var(--medical-spacing-5) + 24px);
+}
+
+/* ✅ STYLES POUR LES CHAMPS DE TYPE EMAIL */
+.form-input[type="email"] {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%233b82f6' viewBox='0 0 24 24'%3E%3Cpath d='M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--medical-spacing-4) center;
+  background-size: 20px;
+  padding-right: calc(var(--medical-spacing-5) + 24px);
+}
+
+/* ✅ MICROINTERACTIONS AVANCÉES */
+.form-input:focus + .form-label,
+.form-select:focus + .form-label,
+.form-textarea:focus + .form-label {
+  color: var(--medical-primary);
+  transform: scale(1.02);
+}
+
+/* ✅ STYLES POUR L'AUTOCOMPLÉTION */
+.form-input:-webkit-autofill,
+.form-input:-webkit-autofill:hover,
+.form-input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--medical-primary-lighter) inset !important;
+  -webkit-text-fill-color: var(--medical-primary) !important;
+}
+
+/* ✅ INDICATEURS DE FORCE DU MOT DE PASSE (si applicable) */
+.password-strength {
+  margin-top: var(--medical-spacing-2);
+  display: flex;
+  gap: var(--medical-spacing-1);
+  height: 4px;
+}
+
+.password-strength-item {
+  flex: 1;
+  background: var(--medical-bg-tertiary);
+  border-radius: var(--medical-radius-full);
+  transition: all var(--medical-transition-normal);
+}
+
+.password-strength-item.weak {
+  background: var(--medical-danger);
+}
+
+.password-strength-item.medium {
+  background: var(--medical-warning);
+}
+
+.password-strength-item.strong {
+  background: var(--medical-success);
+}
+
+/* ✅ STYLES POUR LES MODES D'ACCESSIBILITÉ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .beneficiaire-form::before {
+    animation: none;
+  }
+  
+  .section-icon {
+    animation: none;
+  }
+  
+  .minor-badge {
+    animation: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  :root {
+    --medical-border-primary: #000000;
+    --medical-text-muted: #333333;
+    --medical-bg-hover: #f0f0f0;
+  }
+  
+  .form-input,
+  .form-select,
+  .form-textarea,
+  .form-checkbox,
+  .btn {
+    border-width: 3px;
+  }
+  
+  .minor-badge {
+    border-width: 3px;
+  }
+}
+
+/* ✅ FOCUS VISIBLE POUR NAVIGATION CLAVIER */
+.form-input:focus-visible,
+.form-select:focus-visible,
+.form-textarea:focus-visible,
+.form-checkbox:focus-visible,
+.btn:focus-visible {
+  outline: 3px solid var(--medical-primary);
+  outline-offset: 3px;
+  border-color: var(--medical-primary);
+}
+
+/* ✅ MODE IMPRESSION PROFESSIONNEL */
+@media print {
+  .beneficiaire-form {
+    background: white !important;
+    box-shadow: none !important;
+    border: 2px solid #000 !important;
+    page-break-inside: avoid;
+  }
+  
+  .form-section {
+    background: white !important;
+    border: 1px solid #333 !important;
+    page-break-inside: avoid;
+    margin-bottom: 1rem;
+  }
+  
+  .form-actions,
+  .form-debug {
+    display: none !important;
+  }
+  
+  .btn {
+    display: none !important;
+  }
+  
+  .section-title {
+    color: #000 !important;
+    border-bottom-color: #000 !important;
+    page-break-after: avoid;
+  }
+  
+  .form-input,
+  .form-select,
+  .form-textarea {
+    border: 1px solid #000 !important;
+    background: white !important;
+    color: #000 !important;
+    box-shadow: none !important;
+  }
+  
+  .minor-badge {
+    border: 2px solid #000 !important;
+    background: white !important;
+    color: #000 !important;
+  }
+  
+  .error-message {
+    border: 1px solid #000 !important;
+    background: white !important;
+    color: #000 !important;
+  }
+  
+  .field-info {
+    border: 1px solid #333 !important;
+    background: #f5f5f5 !important;
+    color: #333 !important;
+  }
+}
+
+/* ✅ STYLES POUR ÉCRANS HAUTE RÉSOLUTION */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .form-input,
+  .form-select,
+  .form-textarea {
+    border-width: 1.5px;
+  }
+  
+  .form-checkbox {
+    border-width: 2px;
+  }
+}
+
+/* ✅ DARK MODE (OPTIONNEL) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --medical-bg-primary: #0f172a;
+    --medical-bg-secondary: #1e293b;
+    --medical-bg-tertiary: #334155;
+    --medical-bg-card: #1e293b;
+    --medical-bg-hover: #334155;
+    
+    --medical-text-primary: #f8fafc;
+    --medical-text-secondary: #cbd5e1;
+    --medical-text-tertiary: #94a3b8;
+    --medical-text-muted: #64748b;
+    
+    --medical-border-primary: #334155;
+    --medical-border-secondary: #475569;
+    --medical-border-hover: #64748b;
+  }
+  
+  .beneficiaire-form {
+    background: var(--medical-bg-card);
+  }
+  
+  .form-section {
+    background: linear-gradient(135deg, var(--medical-bg-card) 0%, var(--medical-bg-secondary) 100%);
+  }
+  
+  .form-input,
+  .form-select,
+  .form-textarea {
+    background: var(--medical-bg-tertiary);
+    border-color: var(--medical-border-primary);
+    color: var(--medical-text-primary);
+  }
+  
+  .form-checkbox {
+    background: var(--medical-bg-tertiary);
+    border-color: var(--medical-border-primary);
+  }
+  
+  .form-debug {
+    background: linear-gradient(135deg, var(--medical-bg-tertiary) 0%, var(--medical-bg-secondary) 100%);
+  }
+  
+  .form-debug pre {
+    background: var(--medical-bg-card);
+    color: var(--medical-text-primary);
+  }
+}
+
+/* ✅ STYLES FINAUX POUR COHÉRENCE TOTALE */
+/* Sélection de texte */
+::selection {
+  background: var(--medical-primary-lighter);
+  color: var(--medical-primary);
+}
+
+::-moz-selection {
+  background: var(--medical-primary-lighter);
+  color: var(--medical-primary);
+}
+
+/* Scrollbars personnalisées */
+.medical-form::-webkit-scrollbar {
+  width: 8px;
+}
+
+.medical-form::-webkit-scrollbar-track {
+  background: var(--medical-bg-secondary);
+  border-radius: var(--medical-radius-full);
+}
+
+.medical-form::-webkit-scrollbar-thumb {
+  background: var(--medical-primary);
+  border-radius: var(--medical-radius-full);
+  border: 2px solid var(--medical-bg-secondary);
+}
+
+.medical-form::-webkit-scrollbar-thumb:hover {
+  background: var(--medical-primary-dark);
+}
+
+/* Focus ring global */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--medical-primary);
+  outline-offset: 2px;
+}
+
+/* Désactiver les transitions pendant le redimensionnement */
+.resize-animation-stopper * {
+  animation-duration: 0s !important;
+  transition-duration: 0s !important;
+}

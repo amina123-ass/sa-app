@@ -1,0 +1,110 @@
+version: '3.8'
+
+services:
+  # MySQL Database Service
+  mysql:
+    image: mysql:8
+    container_name: sa_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: sa_management_3afak
+      MYSQL_USER: sa_user
+      MYSQL_PASSWORD: sa_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - sa_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Laravel Backend Service
+  backend:
+    build:
+      context: ./sa-management
+      dockerfile: Dockerfile
+    container_name: sa_backend
+    restart: always
+    working_dir: /var/www/html
+    volumes:
+      - ./sa-management:/var/www/html
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_HOST=mysql
+      - DB_DATABASE=sa_management_3afak
+      - DB_USERNAME=sa_user
+      - DB_PASSWORD=sa_password
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - sa_network
+    command: >
+      bash -c "
+      composer install --no-dev --optimize-autoloader &&
+      php artisan key:generate --force &&
+      php artisan config:cache &&
+      php artisan route:cache &&
+      php artisan migrate --force &&
+      php artisan serve --host=0.0.0.0 --port=8000
+      "
+
+  # React Frontend Service (Development)
+  frontend:
+    image: node:20
+    container_name: sa_frontend
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./sa-management-frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000/api
+      - CHOKIDAR_USEPOLLING=true
+      - WDS_SOCKET_HOST=localhost
+      - WDS_SOCKET_PORT=3000
+    networks:
+      - sa_network
+    command: >
+      bash -c "
+      npm install &&
+      npm start
+      "
+    stdin_open: true
+    tty: true
+
+  # Nginx Service (Production ready - serves built React + Laravel API)
+  nginx:
+    image: nginx:stable
+    container_name: sa_nginx
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+      - ./sa-management-frontend/build:/var/www/frontend
+      - ./sa-management/public:/var/www/backend/public
+    depends_on:
+      - backend
+    networks:
+      - sa_network
+    profiles:
+      - production
+
+volumes:
+  mysql_data:
+
+networks:
+  sa_network:
+    driver: bridge

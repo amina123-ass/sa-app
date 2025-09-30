@@ -1,0 +1,41 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Documentation
+README.md
+*.md
+
+# Environment files
+.env.example
+
+# Node.js
+node_modules
+npm-debug.log
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Laravel specific
+/storage/logs/*.log
+/bootstrap/cache/*.php
+
+# Testing
+.phpunit.result.cache
+tests/
+
+# Deployment
+.deployment
+.deploysettings
