@@ -16,7 +16,7 @@ services:
     networks:
       - sa_network
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$MYSQL_ROOT_PASSWORD || exit 1"]
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -49,15 +49,13 @@ services:
       - DB_DATABASE=sa_management_3afak
       - DB_USERNAME=sa_user
       - DB_PASSWORD=sa_password
-      # CONFIGURATION RÉSEAU - REMPLACEZ 192.168.1.45 PAR VOTRE IP
       - APP_URL=http://192.168.1.45:8000
       - FRONTEND_URL=http://192.168.1.45:3001
-      - CORS_ALLOWED_ORIGINS=http://192.168.1.45:3001,http://127.0.0.1:3001,http://192.168.1.45:3001
-      - SANCTUM_STATEFUL_DOMAINS=192.168.1.45:3001,127.0.0.1:3001,192.168.1.45:3001
+      - CORS_ALLOWED_ORIGINS=http://192.168.1.45:3001,http://127.0.0.1:3001
+      - SANCTUM_STATEFUL_DOMAINS=192.168.1.45:3001,127.0.0.1:3001
       - SESSION_DOMAIN=192.168.1.45
       - SESSION_SECURE_COOKIE=false
       - SESSION_SAME_SITE=lax
-      # CONFIGURATION EMAIL
       - MAIL_MAILER=smtp
       - MAIL_HOST=smtp.gmail.com
       - MAIL_PORT=587
@@ -66,7 +64,6 @@ services:
       - MAIL_ENCRYPTION=tls
       - MAIL_FROM_ADDRESS=aminatitoua342@gmail.com
       - MAIL_EHLO_DOMAIN=192.168.1.45
-      # AUTRES CONFIGURATIONS
       - CACHE_DRIVER=file
       - SESSION_DRIVER=database
       - QUEUE_CONNECTION=database
@@ -78,48 +75,77 @@ services:
       - PHP_MAX_INPUT_TIME=120
       - PHP_POST_MAX_SIZE=50M
       - PHP_UPLOAD_MAX_FILESIZE=50M
-      - NGINX_FASTCGI_READ_TIMEOUT=120
     depends_on:
       mysql:
         condition: service_healthy
     networks:
       - sa_network
+    # ✅ HEALTHCHECK AJOUTÉ
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8000/api/health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
     command: >
       bash -c "
-        echo 'Waiting for MySQL...' &&
-        sleep 15 &&
+        set -e
         
-        if [ ! -d 'vendor' ]; then
-          echo 'Installing Composer dependencies...' &&
-          composer install --no-dev --optimize-autoloader --no-interaction
+        echo '=== Starting Backend Setup ===' &&
+        
+        echo '[1/10] Waiting for MySQL to be ready...' &&
+        for i in {1..30}; do
+          if mysqladmin ping -h mysql -u sa_user -psa_password --silent 2>/dev/null; then
+            echo 'MySQL is ready!' && break
+          fi
+          echo \"Attempt $$i/30: MySQL not ready yet...\" && sleep 2
+        done &&
+        
+        echo '[2/10] Installing Composer dependencies...' &&
+        if [ ! -d 'vendor' ] || [ ! -f 'vendor/autoload.php' ]; then
+          composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist || exit 1
+        else
+          echo 'Vendor already exists, skipping composer install'
         fi &&
         
+        echo '[3/10] Setting up .env file...' &&
         if [ ! -f '.env' ]; then
-          cp .env.example .env
+          cp .env.example .env || exit 1
         fi &&
         
-        if ! grep -q 'APP_KEY=base64:' .env; then
-          php artisan key:generate --force
+        echo '[4/10] Generating application key...' &&
+        if ! grep -q 'APP_KEY=base64:' .env || [ -z \"$$(grep APP_KEY .env | cut -d '=' -f2)\" ]; then
+          php artisan key:generate --force || exit 1
+        else
+          echo 'APP_KEY already exists'
         fi &&
         
+        echo '[5/10] Creating storage directories...' &&
+        mkdir -p storage/logs storage/framework/cache/data storage/framework/sessions storage/framework/views storage/app/public bootstrap/cache &&
+        
+        echo '[6/10] Setting permissions...' &&
+        chmod -R 775 storage bootstrap/cache &&
+        chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || echo 'Warning: Could not change ownership (running as non-root)' &&
+        
+        echo '[7/10] Optimizing autoloader...' &&
         composer dump-autoload --optimize &&
         
-        mkdir -p storage/logs storage/framework/cache/data storage/framework/sessions storage/framework/views storage/app/public &&
-        chmod -R 775 storage bootstrap/cache &&
+        echo '[8/10] Running database migrations...' &&
+        php artisan migrate --force 2>&1 | tee /tmp/migration.log &&
+        if grep -qi 'error\|exception\|fail' /tmp/migration.log; then
+          echo 'Warning: Migration may have failed, check logs'
+        fi &&
         
-        echo 'Running migrations...' &&
-        timeout 120 php artisan migrate --force &&
-        
-        echo 'Creating queue jobs table...' &&
-        php artisan queue:table --force 2>/dev/null || echo 'Queue table exists' &&
-        php artisan migrate --force &&
-        
+        echo '[9/10] Clearing caches...' &&
         php artisan config:clear &&
         php artisan cache:clear &&
         php artisan view:clear &&
-        php artisan storage:link &&
+        php artisan route:clear &&
         
-        echo 'Starting Laravel server for network access...' &&
+        echo '[10/10] Creating storage symlink...' &&
+        php artisan storage:link 2>/dev/null || echo 'Storage link already exists' &&
+        
+        echo '=== Starting Laravel Server ===' &&
         php artisan serve --host=0.0.0.0 --port=8000
       "
 
@@ -135,7 +161,6 @@ services:
     ports:
       - "0.0.0.0:3001:3001"
     environment:
-      # CONFIGURATION RÉSEAU FRONTEND - REMPLACEZ 192.168.1.45 PAR VOTRE IP
       - REACT_APP_API_URL=http://192.168.1.45:8000/api
       - REACT_APP_BASE_URL=http://192.168.1.45:3001
       - HOST=0.0.0.0
@@ -154,20 +179,20 @@ services:
     networks:
       - sa_network
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy  # ✅ Attend que backend soit healthy
     command: >
       sh -c "
-        echo 'Starting frontend setup for network access...' &&
+        echo 'Starting frontend setup...' &&
         npm cache clean --force &&
         
-        echo 'Installing dependencies...' &&
         if [ -f 'package-lock.json' ]; then
           npm ci --no-audit --no-fund --prefer-offline || npm install --no-audit --no-fund
         else
           npm install --no-audit --no-fund
         fi &&
         
-        echo 'Starting React development server for network access...' &&
+        echo 'Starting React development server...' &&
         REACT_APP_API_URL=http://192.168.1.45:8000/api HOST=0.0.0.0 npm start
       "
     stdin_open: true
@@ -178,7 +203,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 120s
-  
+
 volumes:
   mysql_data:
     driver: local
@@ -190,12 +215,10 @@ volumes:
     driver: local
   backend_sessions:
     driver: local
-  
+
 networks:
   sa_network:
     driver: bridge
     ipam:
       config:
         - subnet: 172.20.0.0/16
-
-
