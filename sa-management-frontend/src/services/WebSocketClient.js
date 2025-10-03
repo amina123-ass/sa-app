@@ -17,8 +17,8 @@ class WebSocketClient {
     this.isConnecting = true;
 
     try {
-      // Use localhost instead of the IP address for local development
-      const wsUrl = this.url.replace('192.168.1.45', 'localhost');
+      // Use 192.168.1.45 instead of the IP address for local development
+      const wsUrl = this.url.replace('192.168.1.45', '192.168.1.45');
       
       this.ws = new WebSocket(wsUrl);
 

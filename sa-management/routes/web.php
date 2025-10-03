@@ -26,14 +26,14 @@ Route::get('/login', function (Request $request) {
         return response()->json([
             'success' => false,
             'message' => 'Authentification requise',
-            'login_url' => env('FRONTEND_URL', 'http://localhost:3000') . '/login',
+            'login_url' => env('FRONTEND_URL', 'http://192.168.1.45:3000') . '/login',
             'api_login' => url('/api/login'),
             'redirect_needed' => true
         ], 401);
     }
     
     // Pour les requêtes web normales, rediriger vers le frontend
-    $frontendUrl = env('FRONTEND_URL', 'http://localhost:3000');
+    $frontendUrl = env('FRONTEND_URL', 'http://192.168.1.45:3000');
     $redirectUrl = $frontendUrl . '/login';
     
     // Préserver les paramètres de requête si présents
@@ -55,7 +55,7 @@ Route::get('/admin/users/{id}/activate', function ($id) {
         
         $user = User::findOrFail($id);
         
-        $frontendUrl = env('FRONTEND_URL', 'http://localhost:3000');
+        $frontendUrl = env('FRONTEND_URL', 'http://192.168.1.45:3000');
         
         if (!$user->hasVerifiedEmail()) {
             $redirectUrl = $frontendUrl . '/activation-error?' . http_build_query([
@@ -82,7 +82,7 @@ Route::get('/admin/users/{id}/activate', function ($id) {
     } catch (\Exception $e) {
         Log::error('Erreur activation', ['user_id' => $id, 'error' => $e->getMessage()]);
         
-        $redirectUrl = env('FRONTEND_URL', 'http://localhost:3000') . '/activation-error?' . http_build_query([
+        $redirectUrl = env('FRONTEND_URL', 'http://192.168.1.45:3000') . '/activation-error?' . http_build_query([
             'error' => 'server_error',
             'message' => 'Erreur serveur.'
         ]);
@@ -136,7 +136,7 @@ Route::get('/', function () {
             'api_test' => '/api/test',
             'api_auth' => '/api/login',
             'health' => '/health',
-            'frontend' => env('FRONTEND_URL', 'http://localhost:3000')
+            'frontend' => env('FRONTEND_URL', 'http://192.168.1.45:3000')
         ]
     ]);
 });
@@ -188,7 +188,7 @@ Route::get('/{any}', function (Request $request) {
     }
     
     // Option 3: Redirection vers le frontend externe
-    $frontendUrl = env('FRONTEND_URL', 'http://localhost:3000');
+    $frontendUrl = env('FRONTEND_URL', 'http://192.168.1.45:3000');
     $redirectUrl = $frontendUrl . $request->getPathInfo();
     
     // Préserver les paramètres de requête

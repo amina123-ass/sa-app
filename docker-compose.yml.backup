@@ -19,7 +19,7 @@ services:
     networks:
       - sa_network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "192.168.1.45"]
       timeout: 20s
       retries: 10
 
@@ -70,9 +70,9 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - REACT_APP_API_URL=http://localhost:8000/api
+      - REACT_APP_API_URL=http://192.168.1.45:8000/api
       - CHOKIDAR_USEPOLLING=true
-      - WDS_SOCKET_HOST=localhost
+      - WDS_SOCKET_HOST=192.168.1.45
       - WDS_SOCKET_PORT=3000
     networks:
       - sa_network

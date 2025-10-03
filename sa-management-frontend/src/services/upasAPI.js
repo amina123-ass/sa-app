@@ -2053,7 +2053,7 @@ export const upasAPI = {
   },
 
   getKafalaPdfUrl: (kafalaId) => {
-    const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+    const baseUrl = process.env.REACT_APP_API_URL || 'http://192.168.1.45:8000';
     return `${baseUrl}/api/upas/kafalas/${kafalaId}/pdf`;
   },
 
@@ -2171,7 +2171,7 @@ export const kafalaAPI = {
   },
 
   getPdfUrl: (kafalaId) => {
-    const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+    const baseUrl = process.env.REACT_APP_API_URL || 'http://192.168.1.45:8000';
     return `${baseUrl}/api/upas/kafalas/${kafalaId}/pdf`;
   },
 

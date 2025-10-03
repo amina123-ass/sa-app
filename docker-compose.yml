@@ -14,14 +14,14 @@ services:
       MYSQL_INNODB_LOG_FILE_SIZE: 64M
       MYSQL_MAX_CONNECTIONS: 100
     ports:
-      - "127.0.0.1:3307:3306"
+      - "0.0.0.0:3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./mysql-config:/etc/mysql/conf.d
     networks:
       - sa_network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "sa_user", "-psa_password"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "192.168.1.45", "-u", "sa_user", "-psa_password"]
       timeout: 10s
       retries: 5
       interval: 10s
@@ -46,7 +46,7 @@ services:
       - backend_cache:/var/www/html/storage/framework/cache
       - backend_sessions:/var/www/html/storage/framework/sessions
     ports:
-      - "127.0.0.1:8000:8000"
+      - "0.0.0.0:8000:8000"
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
@@ -54,12 +54,12 @@ services:
       - DB_DATABASE=sa_management_3afak
       - DB_USERNAME=sa_user
       - DB_PASSWORD=sa_password
-      # CONFIGURATION LOCALHOST
-      - APP_URL=http://localhost:8000
-      - FRONTEND_URL=http://localhost:3000
-      - CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
-      - SANCTUM_STATEFUL_DOMAINS=localhost:3000,127.0.0.1:3000
-      - SESSION_DOMAIN=localhost
+      # CONFIGURATION RÉSEAU - REMPLACEZ 192.168.1.45 PAR VOTRE IP
+      - APP_URL=http://192.168.1.45:8000
+      - FRONTEND_URL=http://192.168.1.45:3001
+      - CORS_ALLOWED_ORIGINS=http://192.168.1.45:3001,http://127.0.0.1:3001,http://192.168.1.45:3001
+      - SANCTUM_STATEFUL_DOMAINS=192.168.1.45:3001,127.0.0.1:3001,192.168.1.45:3001
+      - SESSION_DOMAIN=192.168.1.45
       - SESSION_SECURE_COOKIE=false
       - SESSION_SAME_SITE=lax
       # CONFIGURATION EMAIL
@@ -70,7 +70,7 @@ services:
       - MAIL_PASSWORD=uyohfhnnyubypanv
       - MAIL_ENCRYPTION=tls
       - MAIL_FROM_ADDRESS=aminatitoua342@gmail.com
-      - MAIL_EHLO_DOMAIN=localhost
+      - MAIL_EHLO_DOMAIN=192.168.1.45
       # AUTRES CONFIGURATIONS
       - CACHE_DRIVER=file
       - SESSION_DRIVER=database
@@ -107,7 +107,7 @@ services:
           php artisan key:generate --force
         fi &&
         
-        composer dump-autoloader --optimize &&
+        composer dump-autoload --optimize &&
         
         mkdir -p storage/logs storage/framework/cache/data storage/framework/sessions storage/framework/views storage/app/public &&
         chmod -R 775 storage bootstrap/cache &&
@@ -124,7 +124,7 @@ services:
         php artisan view:clear &&
         php artisan storage:link &&
         
-        echo 'Starting Laravel server for localhost access...' &&
+        echo 'Starting Laravel server for network access...' &&
         php artisan serve --host=0.0.0.0 --port=8000
       "
 
@@ -138,13 +138,13 @@ services:
       - frontend_node_modules:/app/node_modules
       - frontend_build_cache:/app/.cache
     ports:
-      - "127.0.0.1:3000:3000"
+      - "0.0.0.0:3001:3001"
     environment:
-      # CONFIGURATION LOCALHOST FRONTEND
-      - REACT_APP_API_URL=http://localhost:8000/api
-      - REACT_APP_BASE_URL=http://localhost:3000
+      # CONFIGURATION RÉSEAU FRONTEND - REMPLACEZ 192.168.1.45 PAR VOTRE IP
+      - REACT_APP_API_URL=http://192.168.1.45:8000/api
+      - REACT_APP_BASE_URL=http://192.168.1.45:3001
       - HOST=0.0.0.0
-      - PORT=3000
+      - PORT=3001
       - CHOKIDAR_USEPOLLING=true
       - FAST_REFRESH=true
       - DISABLE_ESLINT_PLUGIN=true
@@ -154,15 +154,15 @@ services:
       - SKIP_PREFLIGHT_CHECK=true
       - REACT_APP_API_TIMEOUT=15000
       - REACT_APP_RETRY_ATTEMPTS=3
-      - WDS_SOCKET_HOST=localhost
-      - WDS_SOCKET_PORT=3000
+      - WDS_SOCKET_HOST=0.0.0.0
+      - WDS_SOCKET_PORT=3001
     networks:
       - sa_network
     depends_on:
       - backend
     command: >
       sh -c "
-        echo 'Starting frontend setup for localhost access...' &&
+        echo 'Starting frontend setup for network access...' &&
         npm cache clean --force &&
         
         echo 'Installing dependencies...' &&
@@ -172,13 +172,13 @@ services:
           npm install --no-audit --no-fund
         fi &&
         
-        echo 'Starting React development server for localhost access...' &&
-        REACT_APP_API_URL=http://localhost:8000/api HOST=0.0.0.0 npm start
+        echo 'Starting React development server for network access...' &&
+        REACT_APP_API_URL=http://192.168.1.45:8000/api HOST=0.0.0.0 npm start
       "
     stdin_open: true
     tty: true
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://192.168.1.45:3001"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -202,3 +202,5 @@ networks:
     ipam:
       config:
         - subnet: 172.20.0.0/16
+
+

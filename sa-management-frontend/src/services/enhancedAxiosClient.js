@@ -3,7 +3,7 @@ import axios from 'axios';
 import axiosRetry from 'axios-retry';
 
 // Configuration de base
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.45:8000/api';
 const IS_DEVELOPMENT = process.env.NODE_ENV === 'development';
 
 // Créer une instance Axios avec configuration optimisée

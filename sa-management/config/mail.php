@@ -54,7 +54,7 @@ APP_NAME="SA Management"
 APP_ENV=local
 APP_KEY=base64:8CXD+PQg+GGBhe6Q7FVwUf/Wnc1V9DAklt5+LLun+7k=
 APP_DEBUG=true
-APP_URL=http://localhost:8000
+APP_URL=http://192.168.1.45:8000
 
 # Configuration Base de données
 DB_CONNECTION=mysql
@@ -82,8 +82,8 @@ QUEUE_RETRY_AFTER=90
 # Configuration Session
 SESSION_DRIVER=database
 SESSION_LIFETIME=120
-SANCTUM_STATEFUL_DOMAINS=localhost:3000
-SESSION_DOMAIN=localhost
+SANCTUM_STATEFUL_DOMAINS=192.168.1.45:3000
+SESSION_DOMAIN=192.168.1.45
 
 # Configuration Upload/Export
 MAX_FILE_SIZE=10240
@@ -91,8 +91,8 @@ ALLOWED_FILE_TYPES=xlsx,xls,csv
 EXPORT_MAX_RECORDS=10000
 
 # Configuration Frontend
-REACT_APP_API_URL=http://localhost:8000/api
-FRONTEND_URL=http://localhost:3000
+REACT_APP_API_URL=http://192.168.1.45:8000/api
+FRONTEND_URL=http://192.168.1.45:3000
 
 # Configuration PDF
 DOMPDF_ENABLE_PHP=true

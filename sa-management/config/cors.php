@@ -1,24 +1,21 @@
 <?php
-// config/cors.php - Configuration CORS pour localhost
+// config/cors.php - Configuration temporaire pour diagnostic
 
 return [
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie', '*'],  // Temporairement élargi
 
     'allowed_methods' => ['*'],
 
-    // Configuration spécifique pour localhost
-    'allowed_origins' => [
-        'http://localhost:3000',
-        'http://127.0.0.1:3000',
-    ],
+    // Temporairement très permissif pour tester
+    'allowed_origins' => ['*'],  // ATTENTION: À restreindre en production
 
     'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],
 
-    'exposed_headers' => [],
+    'exposed_headers' => ['XSRF-TOKEN'],
 
     'max_age' => 0,
 
-    'supports_credentials' => true,
+    'supports_credentials' => false,  // Temporairement désactivé pour test
 ];

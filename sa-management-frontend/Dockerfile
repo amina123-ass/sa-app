@@ -39,7 +39,7 @@ RUN for i in 1 2 3 4 5; do \
 COPY sa-management-frontend/ ./
 
 # Expose port
-EXPOSE 3000
+EXPOSE 3001
 
 # Start the application
 CMD ["npm", "start", "--", "--host", "0.0.0.0"]

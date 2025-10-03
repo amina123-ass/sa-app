@@ -796,7 +796,7 @@ const UpasStatisticsDashboard = () => {
             <h3 className="text-lg font-semibold text-gray-900 mt-4">Problème de connexion</h3>
             <p className="text-gray-600 mt-2">
               Impossible de se connecter à l'API UPAS. Vérifiez que le serveur est démarré sur{' '}
-              <code className="bg-gray-100 px-1 rounded text-sm">localhost:8000</code>.
+              <code className="bg-gray-100 px-1 rounded text-sm">192.168.1.45:8000</code>.
             </p>
             <button 
               onClick={checkConnection}

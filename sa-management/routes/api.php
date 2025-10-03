@@ -57,7 +57,7 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request) {
 
         if (!hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
             Log::warning('Email verification failed: Invalid hash');
-            return redirect(env('FRONTEND_URL', 'http://localhost:3000') . '/email-verification-result?status=error&message=Lien de vérification invalide');
+            return redirect(env('FRONTEND_URL', 'http://192.168.1.45:3001') . '/email-verification-result?status=error&message=Lien de vérification invalide');
         }
 
         if (!$user->hasVerifiedEmail()) {
@@ -71,7 +71,7 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request) {
             $hasPassword = !empty($user->password) && strlen($user->password) >= 60;
             
             if (!$hasPassword) {
-                $redirectUrl = env('FRONTEND_URL', 'http://localhost:3000') . '/security-setup?' . http_build_query([
+                $redirectUrl = env('FRONTEND_URL', 'http://192.168.1.45:3001') . '/security-setup?' . http_build_query([
                     'email' => $user->email,
                     'verified' => 'true',
                     'user_id' => $user->id,
@@ -82,7 +82,7 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request) {
                 $hasSecurityQuestions = $user->securityAnswers()->count() >= 3;
                 
                 if (!$hasSecurityQuestions) {
-                    $redirectUrl = env('FRONTEND_URL', 'http://localhost:3000') . '/security-setup?' . http_build_query([
+                    $redirectUrl = env('FRONTEND_URL', 'http://192.168.1.45:3001') . '/security-setup?' . http_build_query([
                         'email' => $user->email,
                         'verified' => 'true',
                         'user_id' => $user->id,
@@ -109,7 +109,7 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request) {
                         ]);
                     }
                     
-                    $redirectUrl = env('FRONTEND_URL', 'http://localhost:3000') . '/email-verification-result?' . http_build_query([
+                    $redirectUrl = env('FRONTEND_URL', 'http://192.168.1.45:3001') . '/email-verification-result?' . http_build_query([
                         'status' => 'success',
                         'message' => 'Email vérifié avec succès. Un lien d\'activation vous a été envoyé.',
                         'user_id' => $user->id,
@@ -119,7 +119,7 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request) {
                 }
             }
         } else {
-            $redirectUrl = env('FRONTEND_URL', 'http://localhost:3000') . '/email-verification-result?' . http_build_query([
+            $redirectUrl = env('FRONTEND_URL', 'http://192.168.1.45:3001') . '/email-verification-result?' . http_build_query([
                 'status' => 'already_verified',
                 'message' => 'Votre email a déjà été vérifié.'
             ]);
@@ -132,7 +132,7 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request) {
             'user_id' => $request->route('id')
         ]);
         
-        return redirect(env('FRONTEND_URL', 'http://localhost:3000') . '/email-verification-result?status=error&message=Erreur lors de la vérification');
+        return redirect(env('FRONTEND_URL', 'http://192.168.1.45:3001') . '/email-verification-result?status=error&message=Erreur lors de la vérification');
     }
 })->name('verification.verify');
 
@@ -160,7 +160,7 @@ Route::get('/users/{id}/activate/{token}', function (Request $request, $id, $tok
                 'ip' => request()->ip()
             ]);
             
-            return redirect(env('FRONTEND_URL', 'http://localhost:3000') . '/activation-error?' . http_build_query([
+            return redirect(env('FRONTEND_URL', 'http://192.168.1.45:3001') . '/activation-error?' . http_build_query([
                 'error' => 'invalid_token',
                 'message' => 'Lien d\'activation invalide ou expiré.'
             ]));
@@ -172,7 +172,7 @@ Route::get('/users/{id}/activate/{token}', function (Request $request, $id, $tok
                 'user_id' => $id
             ]);
             
-            return redirect(env('FRONTEND_URL', 'http://localhost:3000') . '/activation-error?' . http_build_query([
+            return redirect(env('FRONTEND_URL', 'http://192.168.1.45:3001') . '/activation-error?' . http_build_query([
                 'error' => 'email_not_verified',
                 'message' => 'Vous devez d\'abord vérifier votre adresse email.'
             ]));
@@ -183,7 +183,7 @@ Route::get('/users/{id}/activate/{token}', function (Request $request, $id, $tok
                 'user_id' => $id
             ]);
             
-            return redirect(env('FRONTEND_URL', 'http://localhost:3000') . '/activation-result?' . http_build_query([
+            return redirect(env('FRONTEND_URL', 'http://192.168.1.45:3001') . '/activation-result?' . http_build_query([
                 'status' => 'already_activated',
                 'message' => 'Votre compte est déjà activé. Vous pouvez vous connecter.',
                 'redirect_to' => 'login'
@@ -191,7 +191,7 @@ Route::get('/users/{id}/activate/{token}', function (Request $request, $id, $tok
         }
         
         // Redirection vers la page publique d'activation
-        $frontendUrl = env('FRONTEND_URL', 'http://localhost:3000');
+        $frontendUrl = env('FRONTEND_URL', 'http://192.168.1.45:3001');
         $redirectUrl = $frontendUrl . '/public/activate-account?' . http_build_query([
             'user_id' => $user->id,
             'token' => $token,
@@ -213,7 +213,7 @@ Route::get('/users/{id}/activate/{token}', function (Request $request, $id, $tok
             'ip' => request()->ip()
         ]);
         
-        return redirect(env('FRONTEND_URL', 'http://localhost:3000') . '/activation-error?' . http_build_query([
+        return redirect(env('FRONTEND_URL', 'http://192.168.1.45:3001') . '/activation-error?' . http_build_query([
             'error' => 'user_not_found',
             'message' => 'Utilisateur non trouvé.'
         ]));
@@ -225,7 +225,7 @@ Route::get('/users/{id}/activate/{token}', function (Request $request, $id, $tok
             'trace' => $e->getTraceAsString()
         ]);
         
-        return redirect(env('FRONTEND_URL', 'http://localhost:3000') . '/activation-error?' . http_build_query([
+        return redirect(env('FRONTEND_URL', 'http://192.168.1.45:3001') . '/activation-error?' . http_build_query([
             'error' => 'server_error',
             'message' => 'Erreur serveur lors de l\'activation.'
         ]));
@@ -334,7 +334,7 @@ Route::post('/users/{id}/activate-with-token', function (Request $request, $id) 
                 'activated_at' => now()->format('d/m/Y H:i:s'),
                 'role_assigned' => $role->libelle,
                 'email_sent' => $emailSent,
-                'login_url' => env('FRONTEND_URL', 'http://localhost:3000') . '/login'
+                'login_url' => env('FRONTEND_URL', 'http://192.168.1.45:3001') . '/login'
             ]
         ];
         
@@ -582,7 +582,7 @@ Route::middleware('auth:sanctum')->group(function () {
                         'activated_at' => now()->format('d/m/Y H:i:s'),
                         'role_assigned' => $role->libelle,
                         'email_sent' => $emailSent,
-                        'login_url' => env('FRONTEND_URL', 'http://localhost:3000') . '/login'
+                        'login_url' => env('FRONTEND_URL', 'http://192.168.1.45:3001') . '/login'
                     ]
                 ];
                 

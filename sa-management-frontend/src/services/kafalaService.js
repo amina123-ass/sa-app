@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Configuration de base pour les appels API
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.45:8000/api';
 const KAFALA_ENDPOINT = `${API_BASE_URL}/upas/kafalas`;
 
 // Instance Axios avec configuration
