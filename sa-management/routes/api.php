@@ -790,7 +790,7 @@ Route::get('/details-type-assistances', [DictionaryController::class, 'getDetail
     });
 
     // ===== ROUTES UPAS =====
-    Route::middleware('auth:sanctum')->prefix('upas')->group(function () {
+    Route::middleware('auth:sanctum')->prefix('uas')->group(function () {
     
 
         
