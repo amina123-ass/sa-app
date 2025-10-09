@@ -15,7 +15,7 @@ class RoleSeeder extends Seeder
                 'description' => 'Gestion complète du système'
             ],
             [
-                'libelle' => 'Responsable UAS',
+                'libelle' => 'Responsable UPAS',
                 'description' => 'Gestion des campagnes et validation des bénéficiaires'
             ],
             [
