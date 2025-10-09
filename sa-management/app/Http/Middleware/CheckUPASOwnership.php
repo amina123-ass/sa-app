@@ -17,7 +17,7 @@ class CheckUPASOwnership
         }
         
         // Les responsables UPAS ne peuvent voir que leurs propres créations
-        if ($user->role->libelle === 'Responsable UPAS') {
+        if ($user->role->libelle === 'Responsable UAS') {
             $resourceId = $request->route()->parameter($model);
             $modelClass = "App\\Models\\" . ucfirst($model);
             
