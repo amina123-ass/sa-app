@@ -2,7 +2,7 @@
 // config/mail.php - Configuration Email Corrigée
 
 return [
-    'admin_email' => env('ADMIN_EMAIL', 'aminatitoua342@gmail.com'),
+    'admin_email' => env('ADMIN_EMAIL', 'dmsps.sefrou@gmail.com'),
 
     // CHANGEMENT IMPORTANT: Utiliser SMTP au lieu de log
     'default' => env('MAIL_MAILER', 'smtp'),
@@ -42,7 +42,7 @@ return [
     ],
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'aminatitoua342@gmail.com'),
+        'address' => env('MAIL_FROM_ADDRESS', 'dmsps.sefrou@gmail.com'),
         'name' => env('MAIL_FROM_NAME', 'SA Management'),
     ],
 ];
@@ -68,12 +68,12 @@ DB_PASSWORD=
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
-MAIL_USERNAME=aminatitoua342@gmail.com
+MAIL_USERNAME=dmsps.sefrou@gmail.com
 MAIL_PASSWORD=uyohfhnnyubypanv
 MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=aminatitoua342@gmail.com
+MAIL_FROM_ADDRESS=dmsps.sefrou@gmail.com
 MAIL_FROM_NAME="SA Management"
-ADMIN_EMAIL=aminatitoua342@gmail.com
+ADMIN_EMAIL=dmsps.sefrou@gmail.com
 
 # Configuration Queue - IMPORTANT POUR LES NOTIFICATIONS
 QUEUE_CONNECTION=database

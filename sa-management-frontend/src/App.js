@@ -186,25 +186,24 @@ function App() {
                   
                   {/* ===== ROUTES ADMIN AVEC NOTIFICATIONS ===== */}
                   <Route 
-                    path="/admin/*" 
-                    element={
-                      <ProtectedRoute requiredRole="Administrateur Informatique">
-                        <AdminLayout>
-                          <Routes>
-                            <Route path="dashboard" element={<AdminDashboard />} />
-                            <Route path="users" element={<UsersManagement />} />
-                            <Route path="users/:userId/activate" element={<UserActivationPage />} />
-                            <Route path="roles" element={<RolesAssignment />} />
-                            <Route path="dictionary" element={<DictionaryPage />} />
-                            <Route path="settings" element={<SettingsPage />} />
-                            <Route path="" element={<Navigate to="dashboard" replace />} />
-                            <Route path="*" element={<Navigate to="dashboard" replace />} />
-                          </Routes>
-                        </AdminLayout>
-                      </ProtectedRoute>
-                    } 
-                  />
-
+   path="/admin/*" 
+   element={
+     <ProtectedRoute requiredRole="Administrateur Informatique">
+       <AdminLayout>
+         <Routes>
+           <Route path="dashboard" element={<AdminDashboard />} />
+           <Route path="users" element={<UsersManagement />} />
+           <Route path="users/:userId/activate" element={<UserActivationPage />} />
+           <Route path="roles" element={<RolesAssignment />} />
+           <Route path="dictionary" element={<DictionaryPage />} />
+           <Route path="settings" element={<SettingsPage />} />
+           <Route path="" element={<Navigate to="dashboard" replace />} />
+                      <Route path="*" element={<Navigate to="dashboard" replace />} />
+         </Routes>
+       </AdminLayout>
+     </ProtectedRoute>
+   } 
+ />
                   {/* ===== ROUTES UPAS SANS DASHBOARD - Redirection vers Bénéficiaires ===== */}
                   <Route 
                     path="/upas/*" 
@@ -244,24 +243,24 @@ function App() {
 
                   {/* ===== ROUTES RECEPTION AVEC NOTIFICATIONS ===== */}
                   <Route 
-                    path="/reception/*" 
-                    element={
-                      <ProtectedRoute requiredRole="Reception">
-                        <ReceptionLayout>
-                          <Routes>
-                            <Route path="campagnes" element={<CampagnesManager />} />
-                            <Route path="import" element={<ImportExcel />} />
-                            <Route path="participants" element={<ParticipantsManager />} />
-                            <Route path="beneficiaires-oui" element={<BeneficiairesOui />} />
-                            <Route path="beneficiaires-non" element={<BeneficiairesNon />} />
-                            <Route path="dashboard" element={<Navigate to="/dashboard" replace />} />
-                            <Route path="" element={<Navigate to="/dashboard" replace />} />
-                            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-                          </Routes>
-                        </ReceptionLayout>
-                      </ProtectedRoute>
-                    }
-                  />
+   path="/reception/*" 
+   element={
+     <ProtectedRoute requiredRole="Reception">
+       <ReceptionLayout>
+         <Routes>
+           <Route path="campagnes" element={<CampagnesManager />} />
+           <Route path="import" element={<ImportExcel />} />
+           <Route path="participants" element={<ParticipantsManager />} />
+           <Route path="beneficiaires-oui" element={<BeneficiairesOui />} />
+           <Route path="beneficiaires-non" element={<BeneficiairesNon />} />
+           <Route path="dashboard" element={<Navigate to="/dashboard" replace />} />
+           <Route path="" element={<Navigate to="/dashboard" replace />} />
+           <Route path="*" element={<Navigate to="/dashboard" replace />} />
+         </Routes>
+       </ReceptionLayout>
+     </ProtectedRoute>
+   }
+ />
 
                   {/* ===== ROUTES GESTIONNAIRE STOCK ===== */}
                   <Route 
