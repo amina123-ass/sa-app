@@ -564,31 +564,7 @@ const ReceptionDashboard = () => {
             </FormControl>
           )}
 
-          <Tooltip title="Actualiser les données">
-            <IconButton 
-              onClick={handleRefresh} 
-              disabled={refreshing || dashboardLoading}
-              sx={{ 
-                bgcolor: COLORS.PRIMARY, 
-                color: 'white',
-                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)',
-                '&:hover': { 
-                  bgcolor: '#2563eb',
-                  transform: 'scale(1.05)'
-                },
-                '&:disabled': {
-                  bgcolor: 'grey.300'
-                },
-                transition: 'all 0.3s ease'
-              }}
-            >
-              {refreshing ? (
-                <CircularProgress size={24} color="inherit" />
-              ) : (
-                <Refresh />
-              )}
-            </IconButton>
-          </Tooltip>
+          
         </Box>
       </Box>
 
