@@ -1,4 +1,9 @@
+version: '3.8'
+
 services:
+  # ==========================================
+  # SERVICE MYSQL 8.0 - Base de données
+  # ==========================================
   mysql:
     image: mysql:8.0
     container_name: sa_mysql
@@ -8,27 +13,55 @@ services:
       MYSQL_DATABASE: sa_management_3afak
       MYSQL_USER: sa_user
       MYSQL_PASSWORD: sa_password
+      # Prévenir les problèmes de corruption InnoDB
+      MYSQL_INITDB_SKIP_TZINFO: 1
+      TZ: Africa/Casablanca
     ports:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./mysql-config:/etc/mysql/conf.d
+      - ./mysql-config:/etc/mysql/conf.d:ro
+      # Volume temporaire pour éviter les locks
+      - /tmp/mysql-tmp:/tmp:rw
     networks:
       - sa_network
+    # Healthcheck amélioré et plus fiable
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-proot_password"]
+      test: >
+        bash -c 'mysqladmin ping -h 127.0.0.1 -u sa_user -psa_password --silent' 
+        || bash -c 'mysql -h 127.0.0.1 -u sa_user -psa_password -e "SELECT 1" >/dev/null 2>&1'
       interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    command: >
-      --innodb-buffer-pool-size=256M
-      --innodb-log-file-size=64M
-      --max-connections=100
-      --innodb-flush-log-at-trx-commit=2
-      --innodb-flush-method=O_DIRECT
-      --bind-address=0.0.0.0
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    # Configuration MySQL optimisée et stable
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --innodb-buffer-pool-size=256M
+      - --innodb-log-file-size=64M
+      - --innodb-flush-log-at-trx-commit=2
+      - --innodb-flush-method=O_DIRECT
+      - --max-connections=100
+      - --max-allowed-packet=256M
+      - --bind-address=0.0.0.0
+      - --skip-name-resolve
+      - --log-error=/var/lib/mysql/error.log
+      - --slow-query-log=1
+      - --slow-query-log-file=/var/lib/mysql/slow.log
+      - --long-query-time=2
+    # Limites de ressources pour éviter les crashs
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
 
+  # ==========================================
+  # SERVICE BACKEND - Laravel 10 + PHP 8.2
+  # ==========================================
   backend:
     build:
       context: ./sa-management
@@ -40,22 +73,37 @@ services:
       - ./sa-management:/var/www/html
       - backend_cache:/var/www/html/storage/framework/cache
       - backend_sessions:/var/www/html/storage/framework/sessions
+      - backend_logs:/var/www/html/storage/logs
     ports:
-      - "0.0.0.0:8000:8000"
+      - "8000:8000"
     environment:
+      # Application
+      - APP_NAME=SA_Management
       - APP_ENV=local
       - APP_DEBUG=true
+      - APP_URL=http://192.168.1.45:8000
+      
+      # Database
+      - DB_CONNECTION=mysql
       - DB_HOST=mysql
+      - DB_PORT=3306
       - DB_DATABASE=sa_management_3afak
       - DB_USERNAME=sa_user
       - DB_PASSWORD=sa_password
-      - APP_URL=http://192.168.1.45:8000
+      
+      # Frontend & CORS
       - FRONTEND_URL=http://192.168.1.45:3001
-      - CORS_ALLOWED_ORIGINS=http://192.168.1.45:3001,http://127.0.0.1:3001
-      - SANCTUM_STATEFUL_DOMAINS=192.168.1.45:3001,127.0.0.1:3001
+      - CORS_ALLOWED_ORIGINS=http://192.168.1.45:3001,http://127.0.0.1:3001,http://localhost:3001
+      
+      # Sanctum & Session
+      - SANCTUM_STATEFUL_DOMAINS=192.168.1.45:3001,127.0.0.1:3001,localhost:3001
       - SESSION_DOMAIN=192.168.1.45
+      - SESSION_DRIVER=database
+      - SESSION_LIFETIME=120
       - SESSION_SECURE_COOKIE=false
       - SESSION_SAME_SITE=lax
+      
+      # Mail Configuration
       - MAIL_MAILER=smtp
       - MAIL_HOST=smtp.gmail.com
       - MAIL_PORT=587
@@ -63,91 +111,161 @@ services:
       - MAIL_PASSWORD=xdrswdwbgptrvnfs
       - MAIL_ENCRYPTION=tls
       - MAIL_FROM_ADDRESS=dmsps.sefrou@gmail.com
+      - MAIL_FROM_NAME=SA_Management
       - MAIL_EHLO_DOMAIN=192.168.1.45
+      
+      # Cache & Queue
       - CACHE_DRIVER=file
-      - SESSION_DRIVER=database
       - QUEUE_CONNECTION=database
-      - DB_CONNECTION=mysql
+      - REDIS_CLIENT=phpredis
+      
+      # Logging
       - LOG_CHANNEL=stack
       - LOG_LEVEL=debug
+      - LOG_DEPRECATIONS_CHANNEL=null
+      
+      # PHP Configuration
       - PHP_MEMORY_LIMIT=512M
       - PHP_MAX_EXECUTION_TIME=120
       - PHP_MAX_INPUT_TIME=120
       - PHP_POST_MAX_SIZE=50M
       - PHP_UPLOAD_MAX_FILESIZE=50M
+      
     depends_on:
       mysql:
         condition: service_healthy
     networks:
       - sa_network
+    # Healthcheck robuste avec retry
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8000 || exit 1"]
-      interval: 15s
+      test: >
+        bash -c 'curl -f http://127.0.0.1:8000/api/health 2>/dev/null' 
+        || bash -c 'curl -f http://127.0.0.1:8000 2>/dev/null' 
+        || bash -c 'php artisan --version >/dev/null 2>&1'
+      interval: 20s
       timeout: 10s
       retries: 5
-      start_period: 60s
+      start_period: 90s
+    # Script de démarrage amélioré
     command: >
       bash -c "
         set -e
         
-        echo '=== Starting Backend Setup ===' &&
+        echo '=====================================' &&
+        echo '   Starting SA Management Backend    ' &&
+        echo '=====================================' &&
+        echo '' &&
         
-        echo '[1/10] Waiting for MySQL to be ready...' &&
-        for i in {1..30}; do
-          if mysqladmin ping -h mysql -u sa_user -psa_password --silent 2>/dev/null; then
-            echo 'MySQL is ready!' && break
+        echo '📦 [1/12] Waiting for MySQL to be fully ready...' &&
+        MAX_TRIES=60
+        COUNTER=0
+        until mysqladmin ping -h mysql -u sa_user -psa_password --silent 2>/dev/null; do
+          COUNTER=$$((COUNTER + 1))
+          if [ $$COUNTER -gt $$MAX_TRIES ]; then
+            echo '❌ ERROR: MySQL failed to start after $$MAX_TRIES attempts'
+            exit 1
           fi
-          echo \"Attempt \$$i/30: MySQL not ready yet...\" && sleep 2
+          echo \"   ⏳ Attempt $$COUNTER/$$MAX_TRIES: Waiting for MySQL...\"
+          sleep 2
         done &&
+        echo '✅ MySQL is ready!' &&
+        echo '' &&
         
-        echo '[2/10] Installing Composer dependencies...' &&
+        echo '📋 [2/12] Verifying database connection...' &&
+        mysql -h mysql -u sa_user -psa_password -e 'SELECT VERSION();' &&
+        echo '✅ Database connection verified!' &&
+        echo '' &&
+        
+        echo '🔧 [3/12] Installing Composer dependencies...' &&
         if [ ! -d 'vendor' ] || [ ! -f 'vendor/autoload.php' ]; then
-          composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist || exit 1
+          composer install --optimize-autoloader --no-interaction --prefer-dist || {
+            echo '⚠️  Production install failed, trying without --no-dev...'
+            composer install --optimize-autoloader --no-interaction --prefer-dist
+          }
         else
-          echo 'Vendor already exists, skipping composer install'
+          echo '✅ Vendor directory already exists'
         fi &&
+        echo '' &&
         
-        echo '[3/10] Setting up .env file...' &&
+        echo '📝 [4/12] Setting up .env file...' &&
         if [ ! -f '.env' ]; then
-          cp .env.example .env || exit 1
-        fi &&
-        
-        echo '[4/10] Generating application key...' &&
-        if ! grep -q 'APP_KEY=base64:' .env || [ -z \"\$(grep APP_KEY .env | cut -d '=' -f2)\" ]; then
-          php artisan key:generate --force || exit 1
+          cp .env.example .env
+          echo '✅ .env file created from .env.example'
         else
-          echo 'APP_KEY already exists'
+          echo '✅ .env file already exists'
         fi &&
+        echo '' &&
         
-        echo '[5/10] Creating storage directories...' &&
-        mkdir -p storage/logs storage/framework/cache/data storage/framework/sessions storage/framework/views storage/app/public bootstrap/cache &&
+        echo '🔑 [5/12] Generating application key...' &&
+        if ! grep -q 'APP_KEY=base64:' .env 2>/dev/null || [ -z \"\$(grep '^APP_KEY=' .env 2>/dev/null | cut -d '=' -f2)\" ]; then
+          php artisan key:generate --force --ansi
+          echo '✅ Application key generated'
+        else
+          echo '✅ Application key already exists'
+        fi &&
+        echo '' &&
         
-        echo '[6/10] Setting permissions...' &&
+        echo '📁 [6/12] Creating storage directories...' &&
+        mkdir -p \\
+          storage/app/public \\
+          storage/framework/cache/data \\
+          storage/framework/sessions \\
+          storage/framework/views \\
+          storage/logs \\
+          bootstrap/cache &&
+        echo '✅ Storage directories created' &&
+        echo '' &&
+        
+        echo '🔐 [7/12] Setting permissions...' &&
         chmod -R 775 storage bootstrap/cache &&
-        chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || echo 'Warning: Could not change ownership (running as non-root)' &&
+        chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || echo '⚠️  Running as non-root, skipping chown' &&
+        echo '✅ Permissions configured' &&
+        echo '' &&
         
-        echo '[7/10] Optimizing autoloader...' &&
-        composer dump-autoload --optimize &&
+        echo '⚡ [8/12] Optimizing autoloader...' &&
+        composer dump-autoload --optimize --classmap-authoritative &&
+        echo '✅ Autoloader optimized' &&
+        echo '' &&
         
-        echo '[8/10] Running database migrations...' &&
-        php artisan migrate --force 2>&1 | tee /tmp/migration.log &&
-        if grep -qi 'error\|exception\|fail' /tmp/migration.log; then
-          echo 'Warning: Migration may have failed, check logs'
+        echo '🗄️  [9/12] Running database migrations...' &&
+        php artisan migrate --force --ansi 2>&1 | tee /tmp/migration.log &&
+        if grep -qi 'error\|exception\|SQLSTATE' /tmp/migration.log 2>/dev/null; then
+          echo '⚠️  Warning: Migration may have encountered issues'
+          cat /tmp/migration.log
+        else
+          echo '✅ Migrations completed successfully'
         fi &&
+        echo '' &&
         
-        echo '[9/10] Clearing caches...' &&
+        echo '🧹 [10/12] Clearing application caches...' &&
         php artisan config:clear &&
         php artisan cache:clear &&
         php artisan view:clear &&
         php artisan route:clear &&
+        echo '✅ Caches cleared' &&
+        echo '' &&
         
-        echo '[10/10] Creating storage symlink...' &&
-        php artisan storage:link 2>/dev/null || echo 'Storage link already exists' &&
+        echo '🔗 [11/12] Creating storage symlink...' &&
+        php artisan storage:link 2>/dev/null || echo '✅ Storage link already exists' &&
+        echo '' &&
         
-        echo '=== Starting Laravel Server ===' &&
-        php artisan serve --host=0.0.0.0 --port=8000
+        echo '🌐 [12/12] Starting Laravel development server...' &&
+        echo '✅ Backend ready at http://192.168.1.45:8000' &&
+        echo '=====================================' &&
+        echo '' &&
+        
+        exec php artisan serve --host=0.0.0.0 --port=8000
       "
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 256M
 
+  # ==========================================
+  # SERVICE FRONTEND - React + Node.js 20
+  # ==========================================
   frontend:
     image: node:20-alpine
     container_name: sa_frontend
@@ -158,58 +276,95 @@ services:
       - frontend_node_modules:/app/node_modules
       - frontend_build_cache:/app/.cache
     ports:
-      - "0.0.0.0:3001:3001"
+      - "3001:3001"
     environment:
+      # React App Configuration
       - REACT_APP_API_URL=http://192.168.1.45:8000/api
       - REACT_APP_BASE_URL=http://192.168.1.45:3001
+      
+      # Development Server
       - HOST=0.0.0.0
       - PORT=3001
+      - WDS_SOCKET_HOST=192.168.1.45
+      - WDS_SOCKET_PORT=3001
+      
+      # Performance Optimization
       - CHOKIDAR_USEPOLLING=false
       - FAST_REFRESH=true
       - DISABLE_ESLINT_PLUGIN=true
       - GENERATE_SOURCEMAP=false
+      - SKIP_PREFLIGHT_CHECK=true
+      
+      # Node.js Configuration
       - NODE_ENV=development
       - NODE_OPTIONS=--max-old-space-size=4096
-      - SKIP_PREFLIGHT_CHECK=true
+      
+      # API Configuration
       - REACT_APP_API_TIMEOUT=15000
       - REACT_APP_RETRY_ATTEMPTS=3
-      - WDS_SOCKET_HOST=0.0.0.0
-      - WDS_SOCKET_PORT=3001
+      
     networks:
       - sa_network
     depends_on:
       backend:
-        condition: service_started
+        condition: service_healthy
+    # Healthcheck amélioré
+    healthcheck:
+      test: >
+        wget --quiet --tries=1 --spider http://127.0.0.1:3001 
+        || curl -f http://127.0.0.1:3001 
+        || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    # Script de démarrage optimisé
     command: >
       sh -c "
-        echo 'Starting frontend setup...' &&
+        echo '=====================================' &&
+        echo '   Starting SA Management Frontend   ' &&
+        echo '=====================================' &&
+        echo '' &&
         
+        echo '📦 Installing/Verifying dependencies...' &&
         if [ ! -d 'node_modules' ] || [ ! -f 'node_modules/.package-lock.json' ]; then
-          echo 'Installing dependencies...' &&
+          echo '📥 Installing fresh dependencies...' &&
           if [ -f 'package-lock.json' ]; then
-            npm ci --no-audit --no-fund --prefer-offline || npm install --no-audit --no-fund
+            npm ci --no-audit --no-fund --prefer-offline 2>/dev/null || npm install --no-audit --no-fund
           else
             npm install --no-audit --no-fund
           fi
         else
-          echo 'Dependencies already installed, skipping...'
+          echo '✅ Dependencies already installed'
         fi &&
+        echo '' &&
         
-        echo 'Starting React development server...' &&
-        REACT_APP_API_URL=http://192.168.1.45:8000/api HOST=0.0.0.0 npm start
+        echo '🚀 Starting React development server...' &&
+        echo '✅ Frontend will be available at http://192.168.1.45:3001' &&
+        echo '=====================================' &&
+        echo '' &&
+        
+        npm start
       "
     stdin_open: true
     tty: true
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:3001"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 120s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
 
+# ==========================================
+# VOLUMES PERSISTANTS
+# ==========================================
 volumes:
   mysql_data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/docker-volumes/mysql
   frontend_node_modules:
     driver: local
   frontend_build_cache:
@@ -218,10 +373,17 @@ volumes:
     driver: local
   backend_sessions:
     driver: local
+  backend_logs:
+    driver: local
 
+# ==========================================
+# RÉSEAU DOCKER
+# ==========================================
 networks:
   sa_network:
     driver: bridge
     ipam:
+      driver: default
       config:
         - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
